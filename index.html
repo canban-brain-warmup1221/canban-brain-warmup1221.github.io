@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canban & Brain Warmup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F5F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #F0F1F6;
+    --ink: #1B1E2B;
+    --ink-soft: #676C80;
+    --border: #E2E4EC;
+    --accent: #5B4FE9;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #EEECFE;
+    --flame: #FF6B4A;
+    --flame-soft: #FFE9E2;
+    --success: #23996E;
+    --success-soft: #E3F5EC;
+    --danger: #E5484D;
+    --tag-urgent: #E5484D;
+    --tag-normal: #5B4FE9;
+    --tag-low: #8B93A7;
+    --shadow-sm: 0 1px 2px rgba(27,30,43,0.06);
+    --shadow-md: 0 8px 24px rgba(27,30,43,0.08);
+    --shadow-lg: 0 24px 48px rgba(27,30,43,0.16);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    color-scheme: light;
+  }
+  [data-theme="dark"]{
+    --bg: #101120;
+    --surface: #191A2C;
+    --surface-2: #20223A;
+    --ink: #EEEFFB;
+    --ink-soft: #9498B3;
+    --border: #2C2F4A;
+    --accent: #8C81FF;
+    --accent-ink: #14152A;
+    --accent-soft: #262A4D;
+    --flame: #FF8A69;
+    --flame-soft: #3A2632;
+    --success: #45D6A2;
+    --success-soft: #17322A;
+    --danger: #FF7A7E;
+    --tag-urgent: #FF7A7E;
+    --tag-normal: #8C81FF;
+    --tag-low: #9498B3;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.35);
+    --shadow-lg: 0 24px 48px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    transition:background .35s ease, color .35s ease;
+    padding-bottom:64px;
+  }
+  h1,h2,h3,.display{ font-family:'Space Grotesk','Inter',sans-serif; }
+  button{ font-family:inherit; }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  /* ---------- Layout shells ---------- */
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 24px; }
+  header.topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 24px 8px;
+    max-width:1180px; margin:0 auto;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:11px;
+    background:linear-gradient(155deg,var(--accent),var(--flame));
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; box-shadow:var(--shadow-sm);
+  }
+  .brand h1{ font-size:19px; margin:0; font-weight:700; letter-spacing:-0.01em; }
+  .brand p{ margin:1px 0 0; font-size:12.5px; color:var(--ink-soft); }
+
+  .theme-toggle{
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:999px; padding:5px; cursor:pointer;
+    box-shadow:var(--shadow-sm);
+  }
+  .theme-toggle .track{
+    width:44px; height:24px; border-radius:999px; background:var(--surface-2);
+    position:relative; transition:background .3s;
+  }
+  .theme-toggle .knob{
+    position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%;
+    background:var(--accent); transition:transform .3s cubic-bezier(.4,1.4,.6,1);
+    display:flex; align-items:center; justify-content:center; font-size:11px;
+  }
+  [data-theme="dark"] .theme-toggle .knob{ transform:translateX(20px); }
+
+  /* ---------- Hero: Brain Warmup ---------- */
+  .hero{ padding:18px 24px 6px; }
+  .warmup-card{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); box-shadow:var(--shadow-md);
+    padding:26px 26px 22px; position:relative; overflow:hidden;
+  }
+  .warmup-card::before{
+    content:""; position:absolute; top:-60px; right:-60px; width:220px; height:220px;
+    background:radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .warmup-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; position:relative; z-index:1;}
+  .warmup-title{ display:flex; align-items:center; gap:10px; }
+  .warmup-title .icon{ font-size:22px; }
+  .warmup-title h2{ margin:0; font-size:20px; }
+  .warmup-title span.sub{ display:block; font-size:12.5px; color:var(--ink-soft); font-weight:400; margin-top:2px; font-family:'Inter'; }
+
+  .streak-badge{
+    display:flex; align-items:center; gap:7px;
+    background:var(--flame-soft); color:var(--flame);
+    padding:8px 14px; border-radius:999px; font-weight:600; font-size:13.5px;
+    white-space:nowrap;
+  }
+  .streak-badge .flame-icon{ font-size:15px; }
+  .streak-badge.pulse{ animation:pulseFlame .55s ease; }
+  @keyframes pulseFlame{
+    0%{ transform:scale(1); } 40%{ transform:scale(1.12); } 100%{ transform:scale(1); }
+  }
+
+  .puzzle-tabs{
+    display:flex; gap:6px; margin:20px 0 16px; position:relative; z-index:1;
+    background:var(--surface-2); padding:5px; border-radius:12px; width:fit-content;
+  }
+  .puzzle-tabs button{
+    border:none; background:transparent; color:var(--ink-soft);
+    padding:8px 14px; border-radius:9px; font-size:13.5px; font-weight:600;
+    cursor:pointer; transition:background .2s, color .2s;
+  }
+  .puzzle-tabs button.active{ background:var(--surface); color:var(--accent); box-shadow:var(--shadow-sm); }
+
+  .puzzle-body{ min-height:118px; position:relative; z-index:1; }
+  .puzzle-fade{ animation:fadeUp .3s ease; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .puzzle-prompt{ font-size:17px; line-height:1.5; margin:2px 0 14px; max-width:62ch; }
+  .puzzle-prompt .expr{ font-family:'Space Grotesk'; font-size:26px; font-weight:600; color:var(--accent); }
+
+  .puzzle-controls{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .puzzle-controls input[type="text"]{
+    padding:10px 13px; border-radius:10px; border:1px solid var(--border);
+    background:var(--bg); color:var(--ink); font-size:14px; width:160px;
+    font-family:'Space Grotesk';
+  }
+  .puzzle-controls input[type="text"]:focus, button:focus-visible, select:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+
+  .btn{
+    border:none; cursor:pointer; border-radius:10px; font-weight:600; font-size:13.5px;
+    padding:10px 16px; transition:transform .15s, box-shadow .15s, background .2s, opacity .15s;
+  }
+  .btn:active{ transform:scale(.96); }
+  .btn-primary{ background:var(--accent); color:var(--accent-ink); }
+  .btn-primary:hover{ box-shadow:var(--shadow-md); }
+  .btn-ghost{ background:var(--surface-2); color:var(--ink); }
+  .btn-ghost:hover{ background:var(--border); }
+  .btn-outline{ background:transparent; color:var(--accent); border:1px solid var(--accent); }
+  .btn-outline:hover{ background:var(--accent-soft); }
+  .btn-sm{ padding:6px 11px; font-size:12.5px; border-radius:8px; }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .puzzle-feedback{ margin-top:10px; font-size:13.5px; font-weight:600; min-height:18px; }
+  .puzzle-feedback.correct{ color:var(--success); }
+  .puzzle-feedback.wrong{ color:var(--danger); }
+  .puzzle-feedback.info{ color:var(--ink-soft); }
+
+  .scramble-word{
+    font-family:'Space Grotesk'; font-size:28px; font-weight:700; letter-spacing:3px;
+    color:var(--ink); margin:2px 0 14px; display:inline-block;
+  }
+
+  /* ---------- Board ---------- */
+  .board-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:34px 24px 14px; max-width:1180px; margin:0 auto; flex-wrap:wrap; gap:12px;
+  }
+  .board-head h2{ margin:0; font-size:19px; }
+  .board-head p{ margin:2px 0 0; font-size:12.5px; color:var(--ink-soft); }
+
+  .board{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
+    padding:0 24px; max-width:1180px; margin:0 auto;
+  }
+  .column{
+    background:var(--surface-2); border-radius:var(--radius-md);
+    padding:14px; min-height:280px; display:flex; flex-direction:column;
+    border:1px solid transparent; transition:border-color .18s, background .18s;
+  }
+  .column.drag-over{ border-color:var(--accent); background:var(--accent-soft); }
+  .column-head{ display:flex; align-items:center; justify-content:space-between; padding:4px 6px 12px; }
+  .column-head .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:8px; }
+  .col-todo .dot{ background:#8B93A7; }
+  .col-progress .dot{ background:#F5A524; }
+  .col-done .dot{ background:var(--success); }
+  .column-head h3{ margin:0; font-size:14px; display:flex; align-items:center; }
+  .count-chip{
+    background:var(--surface); border:1px solid var(--border); color:var(--ink-soft);
+    font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:999px;
+  }
+  .card-list{ display:flex; flex-direction:column; gap:10px; flex:1; min-height:60px; }
+
+  .task-card{
+    background:var(--surface); border-radius:var(--radius-sm); padding:13px 14px;
+    box-shadow:var(--shadow-sm); border:1px solid var(--border); cursor:grab;
+    transition:box-shadow .18s, transform .18s, opacity .18s;
+  }
+  .task-card:hover{ box-shadow:var(--shadow-md); transform:translateY(-1px); }
+  .task-card.dragging{ opacity:.4; }
+  .task-card.completed .task-title{ text-decoration:line-through; color:var(--ink-soft); }
+
+  .tag-pill{
+    display:inline-block; font-size:10.5px; font-weight:700; padding:3px 9px;
+    border-radius:999px; margin-bottom:8px;
+  }
+  .tag-Urgent{ background:rgba(229,72,77,.13); color:var(--tag-urgent); }
+  .tag-Normal{ background:var(--accent-soft); color:var(--tag-normal); }
+  .tag-Low{ background:rgba(139,147,167,.16); color:var(--tag-low); }
+
+  .task-title{ font-size:14.5px; font-weight:600; margin:0 0 4px; word-break:break-word; }
+  .task-desc{ font-size:12.5px; color:var(--ink-soft); margin:0 0 10px; line-height:1.4; word-break:break-word; }
+  .task-actions{ display:flex; gap:6px; flex-wrap:wrap; }
+  .icon-btn{
+    background:var(--surface-2); border:1px solid var(--border); color:var(--ink-soft);
+    border-radius:7px; padding:5px 8px; font-size:12px; cursor:pointer; transition:background .15s,color .15s;
+  }
+  .icon-btn:hover{ background:var(--border); color:var(--ink); }
+  .icon-btn.done-btn:hover{ color:var(--success); border-color:var(--success); }
+  .icon-btn.del-btn:hover{ color:var(--danger); border-color:var(--danger); }
+
+  .empty-hint{
+    color:var(--ink-soft); font-size:12.5px; text-align:center; padding:24px 8px;
+    border:1.5px dashed var(--border); border-radius:var(--radius-sm);
+  }
+
+  .add-card-btn{
+    width:100%; margin-top:10px; background:transparent; border:1.5px dashed var(--border);
+    color:var(--ink-soft); border-radius:var(--radius-sm); padding:10px; font-size:13px;
+    cursor:pointer; font-weight:600; transition:border-color .2s, color .2s;
+  }
+  .add-card-btn:hover{ border-color:var(--accent); color:var(--accent); }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(15,16,28,.45); backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center; z-index:50;
+    opacity:0; pointer-events:none; transition:opacity .2s;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal{
+    background:var(--surface); border-radius:var(--radius-lg); width:min(440px,92vw);
+    padding:24px; box-shadow:var(--shadow-lg); transform:scale(.94) translateY(8px); transition:transform .22s;
+    max-height:88vh; overflow-y:auto;
+  }
+  .modal-overlay.open .modal{ transform:scale(1) translateY(0); }
+  .modal h3{ margin:0 0 4px; font-size:18px; }
+  .modal .modal-sub{ margin:0 0 18px; font-size:12.5px; color:var(--ink-soft); }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; color:var(--ink-soft); }
+  .field input[type="text"], .field textarea, .field select{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border);
+    background:var(--bg); color:var(--ink); font-size:14px; font-family:inherit; resize:vertical;
+  }
+  .field textarea{ min-height:70px; }
+  .tag-choice{ display:flex; gap:8px; }
+  .tag-choice label{
+    flex:1; text-align:center; border:1.5px solid var(--border); border-radius:10px;
+    padding:8px 4px; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--ink-soft);
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .tag-choice input{ display:none; }
+  .tag-choice input:checked + span{ }
+  .tag-choice label.sel-Urgent.checked{ border-color:var(--tag-urgent); color:var(--tag-urgent); background:rgba(229,72,77,.08); }
+  .tag-choice label.sel-Normal.checked{ border-color:var(--tag-normal); color:var(--tag-normal); background:var(--accent-soft); }
+  .tag-choice label.sel-Low.checked{ border-color:var(--tag-low); color:var(--tag-low); background:rgba(139,147,167,.1); }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:10px;
+    font-size:13.5px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
+    z-index:60; box-shadow:var(--shadow-lg);
+  }
+  [data-theme="dark"] .toast{ background:var(--surface); color:var(--ink); border:1px solid var(--border); }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:900px){
+    .board{ grid-template-columns:1fr; }
+  }
+  @media (max-width:560px){
+    header.topbar{ padding:18px 16px 4px; }
+    .hero{ padding:14px 16px 4px; }
+    .board-head{ padding:26px 16px 12px; }
+    .board{ padding:0 16px; }
+    .warmup-card{ padding:20px 18px 18px; }
+    .puzzle-controls input[type="text"]{ width:120px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🧠</div>
+    <div>
+      <h1>Canban &amp; Brain Warmup</h1>
+      <p>Wake your brain up, then get to work</p>
+    </div>
+  </div>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <span class="track"><span class="knob" id="themeKnob">☀️</span></span>
+  </button>
+</header>
+
+<!-- ================= BRAIN WARMUP ================= -->
+<section class="hero">
+  <div class="wrap" style="padding:0;">
+    <div class="warmup-card">
+      <div class="warmup-head">
+        <div class="warmup-title">
+          <span class="icon">🧩</span>
+          <div>
+            <h2>Daily Brain Warmup</h2>
+            <span class="sub">A minute of thinking before the board opens up</span>
+          </div>
+        </div>
+        <div class="streak-badge" id="streakBadge">
+          <span class="flame-icon">🔥</span>
+          <span id="streakText">Streak: 0 Days</span>
+        </div>
+      </div>
+
+      <div class="puzzle-tabs" id="puzzleTabs">
+        <button data-type="riddle" class="active">Riddle</button>
+        <button data-type="math">Quick Math</button>
+        <button data-type="word">Unscramble</button>
+      </div>
+
+      <div class="puzzle-body" id="puzzleBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BOARD ================= -->
+<div class="board-head">
+  <div>
+    <h2>Board</h2>
+    <p>Drag cards across columns, or use the actions on each card</p>
+  </div>
+  <button class="btn btn-primary" id="openAddTask">+ Add Task</button>
+</div>
+
+<div class="board">
+  <div class="column col-todo" data-col="todo">
+    <div class="column-head"><h3><span class="dot"></span>To Do</h3><span class="count-chip" id="count-todo">0</span></div>
+    <div class="card-list" id="list-todo"></div>
+    <button class="add-card-btn" data-col="todo">+ Add card</button>
+  </div>
+  <div class="column col-progress" data-col="progress">
+    <div class="column-head"><h3><span class="dot"></span>In Progress</h3><span class="count-chip" id="count-progress">0</span></div>
+    <div class="card-list" id="list-progress"></div>
+    <button class="add-card-btn" data-col="progress">+ Add card</button>
+  </div>
+  <div class="column col-done" data-col="done">
+    <div class="column-head"><h3><span class="dot"></span>Completed</h3><span class="count-chip" id="count-done">0</span></div>
+    <div class="card-list" id="list-done"></div>
+    <button class="add-card-btn" data-col="done">+ Add card</button>
+  </div>
+</div>
+
+<!-- ================= TASK MODAL ================= -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add Task</h3>
+    <p class="modal-sub">Give it a title, a short note, and a priority tag</p>
+    <form id="taskForm">
+      <div class="field">
+        <label for="taskTitle">Title</label>
+        <input type="text" id="taskTitle" maxlength="80" placeholder="e.g. Write project brief" required>
+      </div>
+      <div class="field">
+        <label for="taskDesc">Description</label>
+        <textarea id="taskDesc" maxlength="240" placeholder="Optional details..."></textarea>
+      </div>
+      <div class="field">
+        <label>Priority</label>
+        <div class="tag-choice" id="tagChoice">
+          <label class="sel-Urgent" for="tag-urgent"><input type="radio" name="tag" id="tag-urgent" value="Urgent"><span>Urgent</span></label>
+          <label class="sel-Normal" for="tag-normal"><input type="radio" name="tag" id="tag-normal" value="Normal" checked><span>Normal</span></label>
+          <label class="sel-Low" for="tag-low"><input type="radio" name="tag" id="tag-low" value="Low Priority"><span>Low</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="taskCol">Column</label>
+        <select id="taskCol">
+          <option value="todo">To Do</option>
+          <option value="progress">In Progress</option>
+          <option value="done">Completed</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelModal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveTaskBtn">Add task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ THEME ============ */
+  const root = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+  const themeKnob = document.getElementById('themeKnob');
+  function applyTheme(t){
+    root.setAttribute('data-theme', t);
+    themeKnob.textContent = t === 'dark' ? '🌙' : '☀️';
+    localStorage.setItem('canban_theme', t);
+  }
+  applyTheme(localStorage.getItem('canban_theme') || 'light');
+  themeToggle.addEventListener('click', ()=>{
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ============ TOAST ============ */
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function toast(msg){
+    clearTimeout(toastTimer);
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 2200);
+  }
+
+  /* ============ STREAK ============ */
+  const streakText = document.getElementById('streakText');
+  const streakBadge = document.getElementById('streakBadge');
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function loadStreak(){
+    try{ return JSON.parse(localStorage.getItem('canban_streak')) || {count:0,lastDate:null}; }
+    catch(e){ return {count:0,lastDate:null}; }
+  }
+  function saveStreak(s){ localStorage.setItem('canban_streak', JSON.stringify(s)); }
+  function renderStreak(){
+    const s = loadStreak();
+    const doneToday = s.lastDate === todayStr();
+    streakText.textContent = doneToday
+      ? `Warmup Completed Today! Streak: ${s.count} Day${s.count===1?'':'s'}`
+      : `Streak: ${s.count} Day${s.count===1?'':'s'} — do today's warmup`;
+  }
+  function markWarmupComplete(){
+    const s = loadStreak();
+    const today = todayStr();
+    if(s.lastDate === today) { renderStreak(); return; } // already counted today
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+    s.count = (s.lastDate === yesterday) ? s.count + 1 : 1;
+    s.lastDate = today;
+    saveStreak(s);
+    renderStreak();
+    streakBadge.classList.remove('pulse');
+    void streakBadge.offsetWidth;
+    streakBadge.classList.add('pulse');
+    toast('🧠 Warmup complete — streak updated!');
+  }
+  renderStreak();
+
+  /* ============ PUZZLES ============ */
+  const RIDDLES = [
+    {q:"The more you take, the more you leave behind. What am I?", a:"footsteps"},
+    {q:"I have keys but no locks, space but no room. What am I?", a:"a keyboard"},
+    {q:"What has to be broken before you can use it?", a:"an egg"},
+    {q:"I'm tall when I'm young and short when I'm old. What am I?", a:"a candle"},
+    {q:"What gets bigger the more you take away from it?", a:"a hole"},
+    {q:"What has many branches but no fruit, trunk, or leaves?", a:"a bank"},
+    {q:"The person who makes it sells it. The person who buys it never uses it. What is it?", a:"a coffin"},
+    {q:"What can travel around the world while staying in a corner?", a:"a stamp"},
+    {q:"What has a head and a tail but no body?", a:"a coin"},
+    {q:"I speak without a mouth and hear without ears. What am I?", a:"an echo"}
+  ];
+  const WORDS = ["FOCUS","SPRINT","DEADLINE","BACKLOG","WORKFLOW","PRIORITY","STANDUP","ROADMAP","MILESTONE","VELOCITY","CHECKLIST","TEAMWORK","DEPLOY","ITERATE","PRODUCTIVE"];
+
+  let currentType = 'riddle';
+  let currentAnswer = null;
+  const puzzleBody = document.getElementById('puzzleBody');
+  const tabs = document.querySelectorAll('#puzzleTabs button');
+
+  tabs.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabs.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentType = btn.dataset.type;
+      renderPuzzle();
+    });
+  });
+
+  function scramble(word){
+    let arr = word.split('');
+    let s;
+    do{
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      s = arr.join('');
+    } while(s === word && word.length > 1);
+    return s;
+  }
+
+  function renderPuzzle(){
+    puzzleBody.innerHTML = '';
+    const box = document.createElement('div');
+    box.className = 'puzzle-fade';
+
+    if(currentType === 'riddle'){
+      const r = RIDDLES[Math.floor(Math.random()*RIDDLES.length)];
+      currentAnswer = r.a;
+      box.innerHTML = `
+        <p class="puzzle-prompt">${r.q}</p>
+        <div class="puzzle-controls">
+          <button class="btn btn-outline" id="revealBtn">Reveal answer</button>
+          <button class="btn btn-ghost" id="nextBtn">Next puzzle</button>
+        </div>
+        <p class="puzzle-feedback info" id="feedback"></p>`;
+      puzzleBody.appendChild(box);
+      document.getElementById('revealBtn').addEventListener('click', function(){
+        document.getElementById('feedback').textContent = 'Answer: ' + currentAnswer;
+        document.getElementById('feedback').className = 'puzzle-feedback correct';
+        markWarmupComplete();
+      });
+    }
+
+    else if(currentType === 'math'){
+      const a = Math.floor(Math.random()*15)+2;
+      const b = Math.floor(Math.random()*9)+2;
+      const c = Math.floor(Math.random()*10)+1;
+      const ops = [
+        {expr:`${a} × ${b} − ${c}`, val:a*b-c},
+        {expr:`${a} × ${b} + ${c}`, val:a*b+c},
+        {expr:`${a*b} − ${c} × 2`, val:a*b-c*2}
+      ];
+      const chosen = ops[Math.floor(Math.random()*ops.length)];
+      currentAnswer = chosen.val;
+      box.innerHTML = `
+        <p class="puzzle-prompt">Solve it, quick: <span class="expr">${chosen.expr}</span></p>
+        <div class="puzzle-controls">
+          <input type="text" inputmode="numeric" id="mathInput" placeholder="Your answer">
+          <button class="btn btn-primary" id="checkBtn">Check</button>
+          <button class="btn btn-ghost" id="nextBtn">Next puzzle</button>
+        </div>
+        <p class="puzzle-feedback info" id="feedback">You've got about 5 seconds — go with your gut.</p>`;
+      puzzleBody.appendChild(box);
+      const input = document.getElementById('mathInput');
+      const feedback = document.getElementById('feedback');
+      input.focus();
+      let timeLeft = 5;
+      const timer = setInterval(()=>{
+        timeLeft--;
+        if(timeLeft <= 0){
+          clearInterval(timer);
+          feedback.textContent = "Time's up — take your best shot, or check below.";
+          feedback.className = 'puzzle-feedback info';
+        } else {
+          feedback.textContent = `${timeLeft}s left...`;
+          feedback.className = 'puzzle-feedback info';
+        }
+      }, 1000);
+      function check(){
+        clearInterval(timer);
+        const val = parseInt(input.value, 10);
+        if(val === currentAnswer){
+          feedback.textContent = `Correct! ${chosen.expr} = ${currentAnswer}`;
+          feedback.className = 'puzzle-feedback correct';
+          markWarmupComplete();
+        } else {
+          feedback.textContent = `Not quite — it's ${currentAnswer}. Nice try!`;
+          feedback.className = 'puzzle-feedback wrong';
+          markWarmupComplete();
+        }
+      }
+      document.getElementById('checkBtn').addEventListener('click', check);
+      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); }});
+    }
+
+    else if(currentType === 'word'){
+      const word = WORDS[Math.floor(Math.random()*WORDS.length)];
+      currentAnswer = word;
+      const scrambled = scramble(word);
+      box.innerHTML = `
+        <p class="puzzle-prompt" style="margin-bottom:4px;">Unscramble this productivity word:</p>
+        <span class="scramble-word">${scrambled}</span>
+        <div class="puzzle-controls">
+          <input type="text" id="wordInput" placeholder="Your guess" autocomplete="off">
+          <button class="btn btn-primary" id="checkWordBtn">Check</button>
+          <button class="btn btn-outline" id="revealWordBtn">Reveal</button>
+          <button class="btn btn-ghost" id="nextBtn">Next puzzle</button>
+        </div>
+        <p class="puzzle-feedback info" id="feedback"></p>`;
+      puzzleBody.appendChild(box);
+      const input = document.getElementById('wordInput');
+      const feedback = document.getElementById('feedback');
+      function check(){
+        if(input.value.trim().toUpperCase() === currentAnswer){
+          feedback.textContent = 'Correct! Well solved.';
+          feedback.className = 'puzzle-feedback correct';
+          markWarmupComplete();
+        } else {
+          feedback.textContent = 'Not it yet — keep trying, or reveal it.';
+          feedback.className = 'puzzle-feedback wrong';
+        }
+      }
+      document.getElementById('checkWordBtn').addEventListener('click', check);
+      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); }});
+      document.getElementById('revealWordBtn').addEventListener('click', ()=>{
+        feedback.textContent = 'Answer: ' + currentAnswer;
+        feedback.className = 'puzzle-feedback correct';
+        markWarmupComplete();
+      });
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', nextPuzzle);
+  }
+
+  function nextPuzzle(){
+    const types = ['riddle','math','word'];
+    currentType = types[Math.floor(Math.random()*types.length)];
+    tabs.forEach(b=> b.classList.toggle('active', b.dataset.type === currentType));
+    renderPuzzle();
+  }
+
+  renderPuzzle();
+
+  /* ============ TASKS / BOARD ============ */
+  const COLS = ['todo','progress','done'];
+  let tasks = loadTasks();
+
+  function loadTasks(){
+    try{ return JSON.parse(localStorage.getItem('canban_tasks')) || []; }
+    catch(e){ return []; }
+  }
+  function saveTasks(){ localStorage.setItem('canban_tasks', JSON.stringify(tasks)); }
+  function uid(){ return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  function renderTasks(){
+    COLS.forEach(col=>{
+      const list = document.getElementById('list-'+col);
+      const colTasks = tasks.filter(t=>t.col===col);
+      document.getElementById('count-'+col).textContent = colTasks.length;
+      list.innerHTML = '';
+      if(colTasks.length === 0){
+        const hint = document.createElement('div');
+        hint.className = 'empty-hint';
+        hint.textContent = col === 'done' ? 'Nothing completed yet' : 'No cards here';
+        list.appendChild(hint);
+        return;
+      }
+      colTasks.forEach(t=>{
+        list.appendChild(renderCard(t));
+      });
+    });
+  }
+
+  function renderCard(t){
+    const card = document.createElement('div');
+    card.className = 'task-card' + (t.col === 'done' ? ' completed' : '');
+    card.draggable = true;
+    card.dataset.id = t.id;
+
+    const tagClass = t.tag === 'Urgent' ? 'tag-Urgent' : (t.tag === 'Low Priority' ? 'tag-Low' : 'tag-Normal');
+    card.innerHTML = `
+      <span class="tag-pill ${tagClass}">${t.tag}</span>
+      <p class="task-title">${escapeHtml(t.title)}</p>
+      ${t.desc ? `<p class="task-desc">${escapeHtml(t.desc)}</p>` : ''}
+      <div class="task-actions">
+        <button class="icon-btn edit-btn" title="Edit">✏️ Edit</button>
+        ${t.col !== 'done' ? `<button class="icon-btn done-btn" title="Mark complete">✔ Complete</button>` : ''}
+        <button class="icon-btn del-btn" title="Delete">🗑 Delete</button>
+      </div>`;
+
+    card.addEventListener('dragstart', ()=>{ card.classList.add('dragging'); dragId = t.id; });
+    card.addEventListener('dragend', ()=>{ card.classList.remove('dragging'); dragId = null; });
+
+    card.querySelector('.edit-btn').addEventListener('click', ()=> openModal(t));
+    card.querySelector('.del-btn').addEventListener('click', ()=>{
+      if(confirm('Delete "'+t.title+'"?')){
+        tasks = tasks.filter(x=>x.id!==t.id);
+        saveTasks(); renderTasks();
+        toast('Task deleted');
+      }
+    });
+    const doneBtn = card.querySelector('.done-btn');
+    if(doneBtn){
+      doneBtn.addEventListener('click', ()=>{
+        t.col = 'done';
+        saveTasks(); renderTasks();
+        toast('Marked complete 🎉');
+      });
+    }
+    return card;
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  /* Drag & drop on columns */
+  let dragId = null;
+  document.querySelectorAll('.column').forEach(col=>{
+    col.addEventListener('dragover', e=>{
+      e.preventDefault();
+      col.classList.add('drag-over');
+    });
+    col.addEventListener('dragleave', ()=> col.classList.remove('drag-over'));
+    col.addEventListener('drop', e=>{
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      if(!dragId) return;
+      const t = tasks.find(x=>x.id===dragId);
+      if(t){
+        t.col = col.dataset.col;
+        saveTasks(); renderTasks();
+      }
+    });
+  });
+
+  /* ============ MODAL ============ */
+  const overlay = document.getElementById('modalOverlay');
+  const form = document.getElementById('taskForm');
+  const modalTitle = document.getElementById('modalTitle');
+  const saveTaskBtn = document.getElementById('saveTaskBtn');
+  let editingId = null;
+
+  function refreshTagStyles(){
+    document.querySelectorAll('.tag-choice label').forEach(l=>{
+      const input = document.getElementById(l.getAttribute('for'));
+      l.classList.toggle('checked', input.checked);
+    });
+  }
+  document.querySelectorAll('.tag-choice input').forEach(inp=> inp.addEventListener('change', refreshTagStyles));
+
+  function openModal(task, presetCol){
+    editingId = task ? task.id : null;
+    modalTitle.textContent = task ? 'Edit Task' : 'Add Task';
+    saveTaskBtn.textContent = task ? 'Save changes' : 'Add task';
+    document.getElementById('taskTitle').value = task ? task.title : '';
+    document.getElementById('taskDesc').value = task ? task.desc : '';
+    document.getElementById('taskCol').value = task ? task.col : (presetCol || 'todo');
+    const tagId = task ? (task.tag === 'Urgent' ? 'tag-urgent' : task.tag === 'Low Priority' ? 'tag-low' : 'tag-normal') : 'tag-normal';
+    document.getElementById(tagId).checked = true;
+    refreshTagStyles();
+    overlay.classList.add('open');
+    setTimeout(()=> document.getElementById('taskTitle').focus(), 50);
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    editingId = null;
+    form.reset();
+    refreshTagStyles();
+  }
+
+  document.getElementById('openAddTask').addEventListener('click', ()=> openModal(null));
+  document.querySelectorAll('.add-card-btn').forEach(b=>{
+    b.addEventListener('click', ()=> openModal(null, b.dataset.col));
+  });
+  document.getElementById('cancelModal').addEventListener('click', closeModal);
+  overlay.addEventListener('click', e=>{ if(e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const title = document.getElementById('taskTitle').value.trim();
+    if(!title) return;
+    const desc = document.getElementById('taskDesc').value.trim();
+    const tag = form.querySelector('input[name="tag"]:checked').value;
+    const col = document.getElementById('taskCol').value;
+
+    if(editingId){
+      const t = tasks.find(x=>x.id===editingId);
+      Object.assign(t, {title, desc, tag, col});
+      toast('Task updated');
+    } else {
+      tasks.push({id:uid(), title, desc, tag, col});
+      toast('Task added');
+    }
+    saveTasks();
+    renderTasks();
+    closeModal();
+  });
+
+  renderTasks();
+})();
+</script>
+</body>
+</html>
