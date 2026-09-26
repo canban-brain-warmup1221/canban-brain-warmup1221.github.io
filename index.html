@@ -65,7 +65,6 @@
       color:var(--ink);
       font-family:'Inter',system-ui,sans-serif;
       -webkit-font-smoothing:antialiased;
-      transition:background .35s ease, color .35s ease;
       padding-bottom:64px;
     }
     h1,h2,h3,.display{ font-family:'Space Grotesk','Inter',sans-serif; }
@@ -86,9 +85,8 @@
     .brand h1{ font-size:19px; margin:0; font-weight:700; letter-spacing:-0.01em; }
     .brand p{ margin:1px 0 0; font-size:12.5px; color:var(--ink-soft); }
 
-    .top-controls{ display:flex; align-items:center; gap:12px; }
+    .top-controls{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 
-    /* Audio Bar */
     .audio-bar{
       display:flex; align-items:center; gap:8px; background:var(--surface);
       border:1px solid var(--border); padding:6px 12px; border-radius:999px;
@@ -97,6 +95,12 @@
     .audio-bar select{
       background:var(--surface-2); border:1px solid var(--border); color:var(--ink);
       padding:4px 8px; border-radius:8px; font-size:12px; font-weight:500; outline:none;
+    }
+
+    .user-pill{
+      display:flex; align-items:center; gap:8px; background:var(--surface);
+      border:1px solid var(--border); padding:6px 14px; border-radius:999px;
+      font-size:13px; font-weight:600; box-shadow:var(--shadow-sm);
     }
 
     .theme-toggle{
@@ -121,54 +125,34 @@
     .warmup-card{
       background:var(--surface); border:1px solid var(--border);
       border-radius:var(--radius-lg); box-shadow:var(--shadow-md);
-      padding:26px 26px 22px; position:relative; overflow:hidden;
-    }
-    .warmup-card::before{
-      content:""; position:absolute; top:-60px; right:-60px; width:220px; height:220px;
-      background:radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
-      pointer-events:none;
+      padding:26px; position:relative; overflow:hidden;
     }
     .warmup-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; position:relative; z-index:1;}
     .warmup-title{ display:flex; align-items:center; gap:10px; }
-    .warmup-title .icon{ font-size:22px; }
     .warmup-title h2{ margin:0; font-size:20px; }
-    .warmup-title span.sub{ display:block; font-size:12.5px; color:var(--ink-soft); font-weight:400; margin-top:2px; font-family:'Inter'; }
+    .warmup-title span.sub{ display:block; font-size:12.5px; color:var(--ink-soft); font-weight:400; margin-top:2px; }
 
     .stats-group{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .streak-badge, .score-badge{
+    .streak-badge, .score-badge, .level-badge{
       display:flex; align-items:center; gap:7px;
-      background:var(--flame-soft); color:var(--flame);
-      padding:8px 14px; border-radius:999px; font-weight:600; font-size:13.5px;
-      white-space:nowrap;
+      padding:8px 14px; border-radius:999px; font-weight:600; font-size:13.5px; white-space:nowrap;
     }
+    .streak-badge{ background:var(--flame-soft); color:var(--flame); }
     .score-badge{ background:var(--accent-soft); color:var(--accent); }
-    .pulse{ animation:pulseFlame .55s ease; }
-    @keyframes pulseFlame{ 0%{ transform:scale(1); } 40%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
+    .level-badge{ background:var(--success-soft); color:var(--success); }
 
     .puzzle-tabs{
       display:flex; gap:6px; margin:20px 0 16px; position:relative; z-index:1;
-      background:var(--surface-2); padding:5px; border-radius:12px; width:fit-content;
+      background:var(--surface-2); padding:5px; border-radius:12px; flex-wrap:wrap;
     }
     .puzzle-tabs button{
       border:none; background:transparent; color:var(--ink-soft);
-      padding:8px 14px; border-radius:999px; font-size:13.5px; font-weight:600;
+      padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600;
       cursor:pointer; transition:background .2s, color .2s;
     }
     .puzzle-tabs button.active{ background:var(--surface); color:var(--accent); box-shadow:var(--shadow-sm); }
 
-    .puzzle-body{ min-height:118px; position:relative; z-index:1; }
-    .puzzle-fade{ animation:fadeUp .3s ease; }
-    @keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
-
-    .puzzle-prompt{ font-size:17px; line-height:1.5; margin:2px 0 14px; max-width:62ch; }
-    .puzzle-prompt .expr{ font-family:'Space Grotesk'; font-size:26px; font-weight:600; color:var(--accent); }
-
-    .puzzle-controls{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .puzzle-controls input[type="text"]{
-      padding:10px 13px; border-radius:10px; border:1px solid var(--border);
-      background:var(--bg); color:var(--ink); font-size:14px; width:160px;
-      font-family:'Space Grotesk';
-    }
+    .puzzle-body{ min-height:160px; position:relative; z-index:1; }
 
     .btn{
       border:none; cursor:pointer; border-radius:10px; font-weight:600; font-size:13.5px;
@@ -180,15 +164,29 @@
     .btn-ghost:hover{ background:var(--border); }
     .btn-outline{ background:transparent; color:var(--accent); border:1px solid var(--accent); }
 
-    .puzzle-feedback{ margin-top:10px; font-size:13.5px; font-weight:600; min-height:18px; }
-    .puzzle-feedback.correct{ color:var(--success); }
-    .puzzle-feedback.wrong{ color:var(--danger); }
-    .puzzle-feedback.info{ color:var(--ink-soft); }
-
-    .scramble-word{
-      font-family:'Space Grotesk'; font-size:28px; font-weight:700; letter-spacing:3px;
-      color:var(--ink); margin:2px 0 14px; display:inline-block;
+    /* Interactive Game Widgets */
+    .game-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(70px, 1fr)); gap:10px; max-width:400px; margin:15px 0; }
+    .game-tile{
+      aspect-ratio:1; background:var(--surface-2); border:2px solid var(--border); border-radius:12px;
+      display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer;
+      user-select:none; transition:transform .1s;
     }
+    .game-tile:active{ transform:scale(0.9); }
+    .game-tile.revealed{ background:var(--accent-soft); border-color:var(--accent); }
+    
+    .reaction-box{
+      width:100%; height:120px; border-radius:14px; background:var(--flame); color:#fff;
+      display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700;
+      cursor:pointer; margin:15px 0; user-select:none;
+    }
+    .reaction-box.waiting{ background:var(--tag-low); }
+    .reaction-box.ready{ background:var(--success); }
+
+    .simon-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; width:180px; margin:15px 0; }
+    .simon-btn{ height:80px; border-radius:12px; opacity:0.6; cursor:pointer; transition:opacity .1s; }
+    .simon-btn.active{ opacity:1; transform:scale(0.96); }
+    .sb-0{ background:#FF4949; } .sb-1{ background:#4D7CFE; }
+    .sb-2{ background:#22C55E; } .sb-3{ background:#EAB308; }
 
     /* Board */
     .board-head{
@@ -271,20 +269,17 @@
     }
     .modal-overlay.open .modal{ transform:scale(1); }
     .modal h3{ margin:0 0 4px; font-size:18px; }
-    .modal .modal-sub{ margin:0 0 18px; font-size:12.5px; color:var(--ink-soft); }
     .field{ margin-bottom:14px; }
     .field label{ display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; color:var(--ink-soft); }
-    .field input[type="text"], .field textarea, .field select{
+    .field input[type="text"], .field input[type="password"], .field textarea, .field select{
       width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border);
       background:var(--bg); color:var(--ink); font-size:14px;
     }
-    .tag-choice{ display:flex; gap:8px; }
-    .tag-choice label{
-      flex:1; text-align:center; border:1.5px solid var(--border); border-radius:10px;
-      padding:8px 4px; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--ink-soft);
-    }
-    .tag-choice input{ display:none; }
     .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+
+    /* Auth Switch Link */
+    .auth-toggle-text{ font-size:12.5px; color:var(--ink-soft); margin-top:12px; text-align:center; }
+    .auth-toggle-text span{ color:var(--accent); font-weight:600; cursor:pointer; text-decoration:underline; }
 
     /* Toast */
     .toast{
@@ -321,9 +316,13 @@
   </div>
   
   <div class="top-controls">
-    <!-- Ambient Sound Control -->
+    <div class="user-pill" id="userPill">
+      <span id="userPillName">👤 Guest</span>
+      <button class="btn btn-ghost" id="authBtn" style="padding:3px 8px; font-size:11px;">Log In</button>
+    </div>
+
     <div class="audio-bar">
-      <button class="btn btn-ghost btn-sm" id="audioToggleBtn">🎵 Play Relaxing Sound</button>
+      <button class="btn btn-ghost btn-sm" id="audioToggleBtn">🎵 Audio</button>
       <select id="soundSelect">
         <option value="breeze">Warm Breeze</option>
         <option value="rain">Peaceful Rain</option>
@@ -340,33 +339,33 @@
   </div>
 </header>
 
-<!-- BRAIN WARMUP -->
+<!-- BRAIN WARMUP ARCADE -->
 <section class="hero">
   <div class="wrap" style="padding:0;">
     <div class="warmup-card">
       <div class="warmup-head">
         <div class="warmup-title">
-          <span class="icon">🧩</span>
           <div>
             <h2>Daily Brain Warmup</h2>
-            <span class="sub">A minute of thinking before the board opens up</span>
+            <span class="sub" id="levelProgress">Level 1 Novice • XP: 0/100</span>
           </div>
         </div>
         <div class="stats-group">
-          <div class="score-badge" id="scoreBadge">
-            <span>⭐ Best Score: <strong id="highScoreText">0</strong></span>
-          </div>
-          <div class="streak-badge" id="streakBadge">
-            <span class="flame-icon">🔥</span>
-            <span id="streakText">Streak: 0 Days</span>
-          </div>
+          <div class="level-badge" id="levelBadge">🎖️ Level <span id="levelVal">1</span></div>
+          <div class="score-badge" id="scoreBadge">⭐ XP: <strong id="xpText">0</strong></div>
+          <div class="streak-badge" id="streakBadge">🔥 <span id="streakText">Streak: 0 Days</span></div>
         </div>
       </div>
 
       <div class="puzzle-tabs" id="puzzleTabs">
-        <button data-type="riddle" class="active">Riddle</button>
-        <button data-type="math">Quick Math</button>
+        <button data-type="riddle" class="active">Riddles</button>
+        <button data-type="math">Speed Math</button>
         <button data-type="word">Unscramble</button>
+        <button data-type="memory">Memory Flip</button>
+        <button data-type="reaction">Reflex Test</button>
+        <button data-type="simon">Simon Pattern</button>
+        <button data-type="trivia">Trivia Hub</button>
+        <button data-type="fact">Daily Mindfuel</button>
       </div>
 
       <div class="puzzle-body" id="puzzleBody"></div>
@@ -377,8 +376,8 @@
 <!-- BOARD -->
 <div class="board-head">
   <div>
-    <h2>Board</h2>
-    <p>Drag cards across columns, or use the actions on each card</p>
+    <h2>Task Board</h2>
+    <p>Drag cards across columns or track progress below</p>
   </div>
   <button class="btn btn-primary" id="openAddTask">+ Add Task</button>
 </div>
@@ -405,12 +404,12 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h3 id="modalTitle">Add Task</h3>
-    <p class="modal-sub">Give it a title, a short note, and a priority tag</p>
+    <p style="font-size:12.5px; color:var(--ink-soft); margin-bottom:14px;">Set details and organize your workflow</p>
     <form id="taskForm">
       <input type="hidden" id="editTaskId">
       <div class="field">
         <label for="taskTitle">Title</label>
-        <input type="text" id="taskTitle" maxlength="80" placeholder="e.g. Write project brief" required>
+        <input type="text" id="taskTitle" maxlength="80" placeholder="e.g. Finish project outline" required>
       </div>
       <div class="field">
         <label for="taskDesc">Description</label>
@@ -418,10 +417,10 @@
       </div>
       <div class="field">
         <label>Priority</label>
-        <div class="tag-choice" id="tagChoice">
-          <label class="sel-Urgent" for="tag-urgent"><input type="radio" name="tag" id="tag-urgent" value="Urgent"><span>Urgent</span></label>
-          <label class="sel-Normal" for="tag-normal"><input type="radio" name="tag" id="tag-normal" value="Normal" checked><span>Normal</span></label>
-          <label class="sel-Low" for="tag-low"><input type="radio" name="tag" id="tag-low" value="Low Priority"><span>Low</span></label>
+        <div style="display:flex; gap:8px;" id="tagChoice">
+          <label style="flex:1; text-align:center; border:1px solid var(--border); border-radius:8px; padding:6px; font-size:12px; cursor:pointer;"><input type="radio" name="tag" value="Urgent"> Urgent</label>
+          <label style="flex:1; text-align:center; border:1px solid var(--border); border-radius:8px; padding:6px; font-size:12px; cursor:pointer;"><input type="radio" name="tag" value="Normal" checked> Normal</label>
+          <label style="flex:1; text-align:center; border:1px solid var(--border); border-radius:8px; padding:6px; font-size:12px; cursor:pointer;"><input type="radio" name="tag" value="Low Priority"> Low</label>
         </div>
       </div>
       <div class="field">
@@ -434,8 +433,33 @@
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost" id="cancelModal">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="saveTaskBtn">Save task</button>
+        <button type="submit" class="btn btn-primary">Save task</button>
       </div>
+    </form>
+  </div>
+</div>
+
+<!-- AUTHENTICATION MODAL -->
+<div class="modal-overlay" id="authModalOverlay">
+  <div class="modal">
+    <h3 id="authModalTitle">Welcome Back</h3>
+    <p style="font-size:12.5px; color:var(--ink-soft); margin-bottom:14px;" id="authModalSub">Sign in to sync your tasks and XP</p>
+    <form id="authForm">
+      <div class="field">
+        <label for="authUsername">Username</label>
+        <input type="text" id="authUsername" required placeholder="Enter username">
+      </div>
+      <div class="field">
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" required placeholder="Enter password">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelAuthModal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="authSubmitBtn">Log In</button>
+      </div>
+      <p class="auth-toggle-text">
+        <span id="authToggleBtn">Need an account? Sign Up</span>
+      </p>
     </form>
   </div>
 </div>
@@ -460,101 +484,164 @@
     applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   });
 
-  /* ============ RELAXING AMBIENT SOUND ENGINE (Web Audio API) ============ */
+  /* ============ AUTHENTICATION SYSTEM (LOCAL STORAGE BASED) ============ */
+  let currentUser = localStorage.getItem('canban_active_user') || null;
+  let isSignUpMode = false;
+
+  const authModalOverlay = document.getElementById('authModalOverlay');
+  const authForm = document.getElementById('authForm');
+  const authBtn = document.getElementById('authBtn');
+  const userPillName = document.getElementById('userPillName');
+  const authToggleBtn = document.getElementById('authToggleBtn');
+
+  function updateAuthUI(){
+    if(currentUser){
+      userPillName.textContent = `👤 ${currentUser}`;
+      authBtn.textContent = 'Log Out';
+    } else {
+      userPillName.textContent = '👤 Guest';
+      authBtn.textContent = 'Log In';
+    }
+  }
+
+  function getUsersDB(){
+    try { return JSON.parse(localStorage.getItem('canban_users_db')) || {}; }
+    catch(e){ return {}; }
+  }
+
+  function saveUsersDB(db){
+    localStorage.setItem('canban_users_db', JSON.stringify(db));
+  }
+
+  authBtn.onclick = ()=>{
+    if(currentUser){
+      currentUser = null;
+      localStorage.removeItem('canban_active_user');
+      updateAuthUI();
+      renderStats();
+      renderTasks();
+      toast('Logged out successfully');
+    } else {
+      isSignUpMode = false;
+      openAuthModal();
+    }
+  };
+
+  function openAuthModal(){
+    authModalOverlay.classList.add('open');
+    document.getElementById('authModalTitle').textContent = isSignUpMode ? 'Create Account' : 'Welcome Back';
+    document.getElementById('authModalSub').textContent = isSignUpMode ? 'Sign up to store progress under your account' : 'Sign in to access your personal board';
+    document.getElementById('authSubmitBtn').textContent = isSignUpMode ? 'Sign Up' : 'Log In';
+    authToggleBtn.textContent = isSignUpMode ? 'Already have an account? Log In' : 'Need an account? Sign Up';
+  }
+
+  function closeAuthModal(){
+    authModalOverlay.classList.remove('open');
+    authForm.reset();
+  }
+
+  document.getElementById('cancelAuthModal').onclick = closeAuthModal;
+
+  authToggleBtn.onclick = ()=>{
+    isSignUpMode = !isSignUpMode;
+    openAuthModal();
+  };
+
+  authForm.onsubmit = e =>{
+    e.preventDefault();
+    const user = document.getElementById('authUsername').value.trim();
+    const pass = document.getElementById('authPassword').value.trim();
+    const db = getUsersDB();
+
+    if(isSignUpMode){
+      if(db[user]){
+        toast('Username already exists!');
+        return;
+      }
+      db[user] = { password: pass };
+      saveUsersDB(db);
+      currentUser = user;
+      localStorage.setItem('canban_active_user', currentUser);
+      toast('Account created successfully! 🎉');
+    } else {
+      if(!db[user] || db[user].password !== pass){
+        toast('Invalid username or password!');
+        return;
+      }
+      currentUser = user;
+      localStorage.setItem('canban_active_user', currentUser);
+      toast(`Welcome back, ${currentUser}!`);
+    }
+
+    updateAuthUI();
+    renderStats();
+    renderTasks();
+    closeAuthModal();
+  };
+
+  updateAuthUI();
+
+  /* ============ AMBIENT AUDIO ============ */
   let audioCtx = null;
   let isPlaying = false;
   let ambientNode = null;
   const audioToggleBtn = document.getElementById('audioToggleBtn');
   const soundSelect = document.getElementById('soundSelect');
 
-  function initAudio(){
-    if(!audioCtx){
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-  }
+  function initAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
   function playAmbientSound(type){
     if(!audioCtx) return;
-    if(ambientNode) { ambientNode.stop(); ambientNode.disconnect(); }
-
+    if(ambientNode){ ambientNode.stop(); ambientNode.disconnect(); }
     const bufferSize = audioCtx.sampleRate * 2;
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
-
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
 
     const noise = audioCtx.createBufferSource();
-    noise.buffer = buffer;
-    noise.loop = true;
-
+    noise.buffer = buffer; noise.loop = true;
     const filter = audioCtx.createBiquadFilter();
     const gain = audioCtx.createGain();
 
-    if(type === 'breeze'){
-      filter.type = 'lowpass';
-      filter.frequency.value = 350;
-      gain.gain.value = 0.08;
-    } else if(type === 'rain'){
-      filter.type = 'lowpass';
-      filter.frequency.value = 800;
-      gain.gain.value = 0.05;
-    } else if(type === 'ocean'){
-      filter.type = 'bandpass';
-      filter.frequency.value = 250;
-      gain.gain.value = 0.12;
-    } else if(type === 'forest'){
-      filter.type = 'lowpass';
-      filter.frequency.value = 500;
-      gain.gain.value = 0.06;
-    } else if(type === 'meditation' || type === 'chords'){
-      filter.type = 'lowpass';
-      filter.frequency.value = 200;
-      gain.gain.value = 0.1;
-    }
+    if(type === 'breeze'){ filter.type = 'lowpass'; filter.frequency.value = 350; gain.gain.value = 0.08; }
+    else if(type === 'rain'){ filter.type = 'lowpass'; filter.frequency.value = 800; gain.gain.value = 0.05; }
+    else if(type === 'ocean'){ filter.type = 'bandpass'; filter.frequency.value = 250; gain.gain.value = 0.12; }
+    else if(type === 'forest'){ filter.type = 'lowpass'; filter.frequency.value = 500; gain.gain.value = 0.06; }
+    else { filter.type = 'lowpass'; filter.frequency.value = 200; gain.gain.value = 0.1; }
 
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(audioCtx.destination);
-    noise.start();
-    ambientNode = noise;
+    noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+    noise.start(); ambientNode = noise;
   }
 
   audioToggleBtn.addEventListener('click', ()=>{
     initAudio();
     if(audioCtx.state === 'suspended') audioCtx.resume();
-
     if(isPlaying){
-      if(ambientNode){ ambientNode.stop(); }
+      if(ambientNode) ambientNode.stop();
       isPlaying = false;
-      audioToggleBtn.textContent = '🎵 Play Relaxing Sound';
+      audioToggleBtn.textContent = '🎵 Audio';
     } else {
       playAmbientSound(soundSelect.value);
       isPlaying = true;
-      audioToggleBtn.textContent = '⏸ Pause Sound';
+      audioToggleBtn.textContent = '⏸ Pause';
     }
   });
 
-  soundSelect.addEventListener('change', ()=>{
-    if(isPlaying){ playAmbientSound(soundSelect.value); }
-  });
+  soundSelect.addEventListener('change', ()=>{ if(isPlaying) playAmbientSound(soundSelect.value); });
 
-  function playSoothingChime(success = true){
+  function playSound(freq1, freq2, duration = 0.3){
     try{
       initAudio();
       if(audioCtx.state === 'suspended') audioCtx.resume();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(success ? 523.25 : 220, audioCtx.currentTime); 
-      if(success) osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.3);
+      osc.frequency.setValueAtTime(freq1, audioCtx.currentTime);
+      if(freq2) osc.frequency.exponentialRampToValueAtTime(freq2, audioCtx.currentTime + duration);
       gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.5);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + duration);
     }catch(e){}
   }
 
@@ -568,31 +655,30 @@
     toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 2200);
   }
 
-  /* ============ STREAK & HIGH SCORES ============ */
-  const streakText = document.getElementById('streakText');
-  const streakBadge = document.getElementById('streakBadge');
-  const highScoreText = document.getElementById('highScoreText');
-
+  /* ============ EXP & PROGRESSION SYSTEM ============ */
   function todayStr(){ return new Date().toISOString().slice(0,10); }
 
+  function getStatsKey(){ return currentUser ? `canban_stats_${currentUser}` : 'canban_stats_guest'; }
+
   function loadStats(){
-    try{ return JSON.parse(localStorage.getItem('canban_stats')) || {streak:0, bestScore:0, lastDate:null}; }
-    catch(e){ return {streak:0, bestScore:0, lastDate:null}; }
+    try{ return JSON.parse(localStorage.getItem(getStatsKey())) || {xp:0, level:1, streak:0, lastDate:null}; }
+    catch(e){ return {xp:0, level:1, streak:0, lastDate:null}; }
   }
-  function saveStats(s){ localStorage.setItem('canban_stats', JSON.stringify(s)); }
+  function saveStats(s){ localStorage.setItem(getStatsKey(), JSON.stringify(s)); }
 
   function renderStats(){
     const s = loadStats();
-    highScoreText.textContent = s.bestScore || 0;
+    document.getElementById('xpText').textContent = s.xp;
+    document.getElementById('levelVal').textContent = s.level;
+    document.getElementById('levelProgress').textContent = `Level ${s.level} Master • XP: ${s.xp % 100}/100`;
     const doneToday = s.lastDate === todayStr();
-    streakText.textContent = doneToday
-      ? `Warmup Done! Streak: ${s.streak} Day${s.streak===1?'':'s'}`
-      : `Streak: ${s.streak} Day${s.streak===1?'':'s'} — do today's warmup`;
+    document.getElementById('streakText').textContent = doneToday ? `Streak: ${s.streak} Days (Done!)` : `Streak: ${s.streak} Days`;
   }
 
-  function addScore(pts){
+  function addXP(amount){
     const s = loadStats();
-    s.bestScore = (s.bestScore || 0) + pts;
+    s.xp += amount;
+    s.level = Math.floor(s.xp / 100) + 1;
     const today = todayStr();
     if(s.lastDate !== today){
       const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
@@ -601,27 +687,37 @@
     }
     saveStats(s);
     renderStats();
-    playSoothingChime(true);
-    streakBadge.classList.remove('pulse');
-    void streakBadge.offsetWidth;
-    streakBadge.classList.add('pulse');
+    playSound(523, 783, 0.4);
+    toast(`+${amount} XP Gained! 🎉`);
   }
 
   renderStats();
 
-  /* ============ PUZZLES ============ */
+  /* ============ DATA BANKS ============ */
   const RIDDLES = [
     {q:"The more you take, the more you leave behind. What am I?", a:"footsteps"},
     {q:"I have keys but no locks, space but no room. What am I?", a:"a keyboard"},
     {q:"What has to be broken before you can use it?", a:"an egg"},
-    {q:"I'm tall when I'm young and short when I'm old. What am I?", a:"a candle"},
-    {q:"What gets bigger the more you take away from it?", a:"a hole"},
-    {q:"What has many branches but no fruit, trunk, or leaves?", a:"a bank"}
+    {q:"I am tall when I am young, and short when I am old. What am I?", a:"a candle"},
+    {q:"What gets bigger the more you take away from it?", a:"a hole"}
   ];
-  const WORDS = ["FOCUS","SPRINT","DEADLINE","BACKLOG","WORKFLOW","PRIORITY","STANDUP","ROADMAP","MILESTONE","TEAMWORK"];
 
+  const TRIVIA = [
+    {q:"What planet is known as the Red Planet?", options:["Earth","Mars","Jupiter","Venus"], correct:1},
+    {q:"What is the chemical symbol for Gold?", options:["Au","Ag","Fe","Gd"], correct:0},
+    {q:"Which ocean is the largest on Earth?", options:["Atlantic","Indian","Arctic","Pacific"], correct:3}
+  ];
+
+  const FACTS = [
+    "Honey never spoils. Archeologists found 3,000-year-old edible honey in Egyptian tombs!",
+    "Bananas are curved because they grow towards the sun against gravity.",
+    "Octopuses have three hearts and blue blood."
+  ];
+
+  const WORDS = ["FOCUS","SPRINT","WORKFLOW","PRIORITY","DEADLINE","CREATIVITY"];
+
+  /* ============ ARCADE GAMES & MODES ============ */
   let currentType = 'riddle';
-  let currentAnswer = null;
   const puzzleBody = document.getElementById('puzzleBody');
   const tabs = document.querySelectorAll('#puzzleTabs button');
 
@@ -630,133 +726,247 @@
       tabs.forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       currentType = btn.dataset.type;
-      renderPuzzle();
+      renderGame();
     });
   });
 
-  function scramble(word){
-    let arr = word.split('');
-    let s;
-    do{
-      for(let i=arr.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]]=[arr[j],arr[i]];
-      }
-      s = arr.join('');
-    } while(s === word && word.length > 1);
-    return s;
-  }
-
-  function renderPuzzle(){
+  function renderGame(){
     puzzleBody.innerHTML = '';
     const box = document.createElement('div');
-    box.className = 'puzzle-fade';
 
     if(currentType === 'riddle'){
       const r = RIDDLES[Math.floor(Math.random()*RIDDLES.length)];
-      currentAnswer = r.a;
       box.innerHTML = `
-        <p class="puzzle-prompt">${r.q}</p>
-        <div class="puzzle-controls">
-          <button class="btn btn-outline" id="revealBtn">Reveal answer</button>
-          <button class="btn btn-ghost" id="nextBtn">Next puzzle</button>
-        </div>
-        <p class="puzzle-feedback info" id="feedback"></p>`;
+        <p style="font-size:16px; margin-bottom:14px;"><strong>Riddle:</strong> ${r.q}</p>
+        <button class="btn btn-outline" id="revBtn">Reveal Answer</button>
+        <button class="btn btn-ghost" id="nextG">Next Riddle</button>
+        <p id="ansText" style="margin-top:10px; font-weight:600; color:var(--accent);"></p>`;
       puzzleBody.appendChild(box);
-      document.getElementById('revealBtn').addEventListener('click', function(){
-        document.getElementById('feedback').textContent = 'Answer: ' + currentAnswer;
-        document.getElementById('feedback').className = 'puzzle-feedback correct';
-        addScore(10);
-      });
+      document.getElementById('revBtn').onclick = ()=>{
+        document.getElementById('ansText').textContent = `Answer: ${r.a}`;
+        addXP(15);
+      };
+      document.getElementById('nextG').onclick = renderGame;
     }
 
     else if(currentType === 'math'){
-      const a = Math.floor(Math.random()*15)+2;
-      const b = Math.floor(Math.random()*9)+2;
-      const c = Math.floor(Math.random()*10)+1;
-      const chosen = {expr:`${a} × ${b} + ${c}`, val:a*b+c};
-      currentAnswer = chosen.val;
+      const a = Math.floor(Math.random()*20)+5;
+      const b = Math.floor(Math.random()*12)+2;
+      const ans = a * b;
       box.innerHTML = `
-        <p class="puzzle-prompt">Solve it, quick: <span class="expr">${chosen.expr}</span></p>
-        <div class="puzzle-controls">
-          <input type="text" inputmode="numeric" id="mathInput" placeholder="Your answer">
-          <button class="btn btn-primary" id="checkBtn">Check</button>
-          <button class="btn btn-ghost" id="nextBtn">Next puzzle</button>
+        <p style="font-size:18px;">Solve fast: <strong style="color:var(--accent);">${a} × ${b}</strong></p>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <input type="number" id="mAns" placeholder="Your Answer" style="padding:8px; border-radius:8px; border:1px solid var(--border); width:140px;">
+          <button class="btn btn-primary" id="mChk">Submit</button>
+          <button class="btn btn-ghost" id="nextG">Next</button>
         </div>
-        <p class="puzzle-feedback info" id="feedback">Quick brain exercise!</p>`;
+        <p id="mFb" style="margin-top:10px; font-weight:600;"></p>`;
       puzzleBody.appendChild(box);
-      const input = document.getElementById('mathInput');
-      const feedback = document.getElementById('feedback');
-      input.focus();
-
-      function check(){
-        const val = parseInt(input.value, 10);
-        if(val === currentAnswer){
-          feedback.textContent = `Correct! ${chosen.expr} = ${currentAnswer}`;
-          feedback.className = 'puzzle-feedback correct';
-          addScore(15);
+      document.getElementById('mChk').onclick = ()=>{
+        const val = parseInt(document.getElementById('mAns').value, 10);
+        if(val === ans){
+          document.getElementById('mFb').textContent = "Correct! Great work!";
+          document.getElementById('mFb').style.color = "var(--success)";
+          addXP(20);
         } else {
-          feedback.textContent = `Not quite — it's ${currentAnswer}. Nice try!`;
-          feedback.className = 'puzzle-feedback wrong';
-          playSoothingChime(false);
+          document.getElementById('mFb').textContent = `Incorrect! Answer was ${ans}`;
+          document.getElementById('mFb').style.color = "var(--danger)";
+          playSound(180, 100, 0.3);
         }
-      }
-      document.getElementById('checkBtn').addEventListener('click', check);
-      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); }});
+      };
+      document.getElementById('nextG').onclick = renderGame;
     }
 
     else if(currentType === 'word'){
-      const word = WORDS[Math.floor(Math.random()*WORDS.length)];
-      currentAnswer = word;
+      const w = WORDS[Math.floor(Math.random()*WORDS.length)];
+      const scrambled = w.split('').sort(()=>Math.random()-0.5).join('');
       box.innerHTML = `
-        <p class="puzzle-prompt" style="margin-bottom:4px;">Unscramble this word:</p>
-        <span class="scramble-word">${scramble(word)}</span>
-        <div class="puzzle-controls">
-          <input type="text" id="wordInput" placeholder="Your guess" autocomplete="off">
-          <button class="btn btn-primary" id="checkWordBtn">Check</button>
-          <button class="btn btn-outline" id="revealWordBtn">Reveal</button>
-          <button class="btn btn-ghost" id="nextBtn">Next puzzle</button>
+        <p style="font-size:16px;">Unscramble the word: <strong style="font-family:'Space Grotesk'; font-size:22px; letter-spacing:2px;">${scrambled}</strong></p>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <input type="text" id="wAns" placeholder="Word" style="padding:8px; border-radius:8px; border:1px solid var(--border); width:160px; text-transform:uppercase;">
+          <button class="btn btn-primary" id="wChk">Check</button>
+          <button class="btn btn-ghost" id="nextG">Next</button>
         </div>
-        <p class="puzzle-feedback info" id="feedback"></p>`;
+        <p id="wFb" style="margin-top:10px; font-weight:600;"></p>`;
       puzzleBody.appendChild(box);
-      const input = document.getElementById('wordInput');
-      const feedback = document.getElementById('feedback');
-      function check(){
-        if(input.value.trim().toUpperCase() === currentAnswer){
-          feedback.textContent = 'Correct! Well solved.';
-          feedback.className = 'puzzle-feedback correct';
-          addScore(10);
+      document.getElementById('wChk').onclick = ()=>{
+        if(document.getElementById('wAns').value.trim().toUpperCase() === w){
+          document.getElementById('wFb').textContent = "Spot on!";
+          document.getElementById('wFb').style.color = "var(--success)";
+          addXP(20);
         } else {
-          feedback.textContent = 'Not it yet — keep trying, or reveal it.';
-          feedback.className = 'puzzle-feedback wrong';
-          playSoothingChime(false);
+          document.getElementById('wFb').textContent = `Try again! Word was ${w}`;
+          document.getElementById('wFb').style.color = "var(--danger)";
         }
-      }
-      document.getElementById('checkWordBtn').addEventListener('click', check);
-      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); }});
-      document.getElementById('revealWordBtn').addEventListener('click', ()=>{
-        feedback.textContent = 'Answer: ' + currentAnswer;
-        feedback.className = 'puzzle-feedback correct';
+      };
+      document.getElementById('nextG').onclick = renderGame;
+    }
+
+    else if(currentType === 'memory'){
+      box.innerHTML = `<p style="margin-bottom:8px;">Match the emoji pairs:</p><div class="game-grid" id="memGrid"></div>`;
+      puzzleBody.appendChild(box);
+      const icons = ['🐶','🐱','🦊','🐸','🐶','🐱','🦊','🐸'];
+      const shuffled = icons.sort(()=>Math.random()-0.5);
+      let selected = [];
+      let matches = 0;
+      const grid = document.getElementById('memGrid');
+
+      shuffled.forEach((icon)=>{
+        const tile = document.createElement('div');
+        tile.className = 'game-tile';
+        tile.dataset.icon = icon;
+        tile.onclick = ()=>{
+          if(tile.classList.contains('revealed') || selected.length === 2) return;
+          tile.textContent = icon;
+          tile.classList.add('revealed');
+          selected.push(tile);
+
+          if(selected.length === 2){
+            if(selected[0].dataset.icon === selected[1].dataset.icon){
+              matches++;
+              selected = [];
+              if(matches === 4) addXP(30);
+            } else {
+              setTimeout(()=>{
+                selected.forEach(t=>{ t.textContent = ''; t.classList.remove('revealed'); });
+                selected = [];
+              }, 600);
+            }
+          }
+        };
+        grid.appendChild(tile);
       });
     }
 
-    document.getElementById('nextBtn').addEventListener('click', renderPuzzle);
+    else if(currentType === 'reaction'){
+      box.innerHTML = `
+        <p>Test your reaction speed. Click as fast as you can when the box turns GREEN!</p>
+        <div class="reaction-box waiting" id="rxBox">Click to Start</div>`;
+      puzzleBody.appendChild(box);
+      const rxBox = document.getElementById('rxBox');
+      let timer = null;
+      let startTime = 0;
+
+      rxBox.onclick = ()=>{
+        if(rxBox.classList.contains('waiting')){
+          rxBox.textContent = "Wait for GREEN...";
+          rxBox.style.background = "var(--flame)";
+          rxBox.classList.remove('waiting');
+          timer = setTimeout(()=>{
+            rxBox.classList.add('ready');
+            rxBox.textContent = "CLICK NOW!";
+            startTime = Date.now();
+          }, Math.random()*2500 + 1500);
+        } else if(rxBox.classList.contains('ready')){
+          const diff = Date.now() - startTime;
+          rxBox.textContent = `${diff} ms! Click to try again`;
+          rxBox.className = 'reaction-box waiting';
+          addXP(25);
+        } else {
+          clearTimeout(timer);
+          rxBox.textContent = "Too early! Click to restart";
+          rxBox.className = 'reaction-box waiting';
+        }
+      };
+    }
+
+    else if(currentType === 'simon'){
+      box.innerHTML = `
+        <p>Simon Pattern Game: Repeat the pattern!</p>
+        <button class="btn btn-primary" id="simStart" style="margin-bottom:10px;">Start Round</button>
+        <div class="simon-grid">
+          <div class="simon-btn sb-0" data-id="0"></div>
+          <div class="simon-btn sb-1" data-id="1"></div>
+          <div class="simon-btn sb-2" data-id="2"></div>
+          <div class="simon-btn sb-3" data-id="3"></div>
+        </div>
+        <p id="simFb" style="font-weight:600;"></p>`;
+      puzzleBody.appendChild(box);
+
+      let seq = [];
+      let playerSeq = [];
+      const btns = document.querySelectorAll('.simon-btn');
+
+      function flash(id){
+        btns[id].classList.add('active');
+        playSound(200 + id*100, 400 + id*100, 0.2);
+        setTimeout(()=> btns[id].classList.remove('active'), 300);
+      }
+
+      document.getElementById('simStart').onclick = ()=>{
+        seq = [Math.floor(Math.random()*4), Math.floor(Math.random()*4), Math.floor(Math.random()*4)];
+        playerSeq = [];
+        document.getElementById('simFb').textContent = "Watch carefully...";
+        seq.forEach((id, i)=>{ setTimeout(()=> flash(id), (i+1)*500); });
+      };
+
+      btns.forEach(b=>{
+        b.onclick = ()=>{
+          const id = parseInt(b.dataset.id, 10);
+          flash(id);
+          playerSeq.push(id);
+          if(playerSeq[playerSeq.length-1] !== seq[playerSeq.length-1]){
+            document.getElementById('simFb').textContent = "Wrong sequence! Try again.";
+          } else if(playerSeq.length === seq.length){
+            document.getElementById('simFb').textContent = "Sequence Complete! You win!";
+            addXP(35);
+          }
+        };
+      });
+    }
+
+    else if(currentType === 'trivia'){
+      const t = TRIVIA[Math.floor(Math.random()*TRIVIA.length)];
+      box.innerHTML = `
+        <p style="font-size:16px; margin-bottom:12px;"><strong>Question:</strong> ${t.q}</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:360px;" id="tOpts"></div>
+        <p id="tFb" style="margin-top:10px; font-weight:600;"></p>`;
+      puzzleBody.appendChild(box);
+      const opts = document.getElementById('tOpts');
+      t.options.forEach((opt, idx)=>{
+        const b = document.createElement('button');
+        b.className = 'btn btn-ghost';
+        b.textContent = opt;
+        b.onclick = ()=>{
+          if(idx === t.correct){
+            document.getElementById('tFb').textContent = "Correct answer!";
+            document.getElementById('tFb').style.color = "var(--success)";
+            addXP(25);
+          } else {
+            document.getElementById('tFb').textContent = "Wrong answer!";
+            document.getElementById('tFb').style.color = "var(--danger)";
+          }
+        };
+        opts.appendChild(b);
+      });
+    }
+
+    else if(currentType === 'fact'){
+      const f = FACTS[Math.floor(Math.random()*FACTS.length)];
+      box.innerHTML = `
+        <p style="font-size:16px; line-height:1.5;">💡 <strong>Did You Know?</strong><br>${f}</p>
+        <button class="btn btn-outline" id="nextG" style="margin-top:10px;">Get Another Fact</button>`;
+      puzzleBody.appendChild(box);
+      document.getElementById('nextG').onclick = ()=>{ addXP(5); renderGame(); };
+    }
   }
 
-  renderPuzzle();
+  renderGame();
 
-  /* ============ BOARD ============ */
+  /* ============ TASK BOARD ============ */
   const COLS = ['todo','progress','done'];
-  let tasks = loadTasks();
+
+  function getTasksKey(){ return currentUser ? `canban_tasks_${currentUser}` : 'canban_tasks_guest'; }
 
   function loadTasks(){
-    try{ return JSON.parse(localStorage.getItem('canban_tasks')) || []; }
+    try{ return JSON.parse(localStorage.getItem(getTasksKey())) || []; }
     catch(e){ return []; }
   }
-  function saveTasks(){ localStorage.setItem('canban_tasks', JSON.stringify(tasks)); }
+  function saveTasks(tasks){ localStorage.setItem(getTasksKey(), JSON.stringify(tasks)); }
   function uid(){ return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
   function renderTasks(){
+    const tasks = loadTasks();
     COLS.forEach(col=>{
       const list = document.getElementById('list-'+col);
       const colTasks = tasks.filter(t=>t.col===col);
@@ -765,7 +975,7 @@
       if(colTasks.length === 0){
         const hint = document.createElement('div');
         hint.className = 'empty-hint';
-        hint.textContent = col === 'done' ? 'Nothing completed yet' : 'No cards here';
+        hint.textContent = col === 'done' ? 'Nothing completed yet' : 'No tasks here';
         list.appendChild(hint);
         return;
       }
@@ -793,16 +1003,19 @@
     card.addEventListener('dragstart', ()=>{ card.classList.add('dragging'); dragId = t.id; });
     card.addEventListener('dragend', ()=>{ card.classList.remove('dragging'); dragId = null; });
 
-    card.querySelector('.edit-btn').addEventListener('click', ()=> openModal(t));
-    card.querySelector('.del-btn').addEventListener('click', ()=>{
-      tasks = tasks.filter(x=>x.id!==t.id);
-      saveTasks(); renderTasks(); toast('Task deleted');
-    });
+    card.querySelector('.edit-btn').onclick = ()=> openModal(t);
+    card.querySelector('.del-btn').onclick = ()=>{
+      let tasks = loadTasks().filter(x=>x.id!==t.id);
+      saveTasks(tasks); renderTasks(); toast('Task deleted');
+    };
     const doneBtn = card.querySelector('.done-btn');
     if(doneBtn){
-      doneBtn.addEventListener('click', ()=>{
-        t.col = 'done'; saveTasks(); renderTasks(); toast('Marked complete 🎉');
-      });
+      doneBtn.onclick = ()=>{
+        let tasks = loadTasks();
+        const found = tasks.find(x=>x.id===t.id);
+        if(found){ found.col = 'done'; }
+        saveTasks(tasks); renderTasks(); addXP(30); toast('Task Completed! +30 XP');
+      };
     }
     return card;
   }
@@ -821,12 +1034,17 @@
       e.preventDefault();
       col.classList.remove('drag-over');
       if(!dragId) return;
+      let tasks = loadTasks();
       const t = tasks.find(x=>x.id===dragId);
-      if(t){ t.col = col.dataset.col; saveTasks(); renderTasks(); }
+      if(t){
+        if(t.col !== 'done' && col.dataset.col === 'done') addXP(30);
+        t.col = col.dataset.col;
+        saveTasks(tasks); renderTasks();
+      }
     });
   });
 
-  /* ============ MODAL ============ */
+  /* ============ TASK MODAL SYSTEM ============ */
   const overlay = document.getElementById('modalOverlay');
   const form = document.getElementById('taskForm');
 
@@ -847,14 +1065,15 @@
 
   function closeModal(){ overlay.classList.remove('open'); }
 
-  document.getElementById('openAddTask').addEventListener('click', ()=> openModal());
-  document.getElementById('cancelModal').addEventListener('click', closeModal);
+  document.getElementById('openAddTask').onclick = ()=> openModal();
+  document.getElementById('cancelModal').onclick = closeModal;
   document.querySelectorAll('.add-card-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ openModal(); document.getElementById('taskCol').value = btn.dataset.col; });
+    btn.onclick = ()=>{ openModal(); document.getElementById('taskCol').value = btn.dataset.col; };
   });
 
-  form.addEventListener('submit', e=>{
+  form.onsubmit = e=>{
     e.preventDefault();
+    let tasks = loadTasks();
     const id = document.getElementById('editTaskId').value;
     const title = document.getElementById('taskTitle').value.trim();
     const desc = document.getElementById('taskDesc').value.trim();
@@ -867,8 +1086,8 @@
     } else {
       tasks.push({ id: uid(), title, desc, tag, col });
     }
-    saveTasks(); renderTasks(); closeModal(); toast('Task saved!');
-  });
+    saveTasks(tasks); renderTasks(); closeModal(); toast('Task saved!');
+  };
 
   renderTasks();
 })();
